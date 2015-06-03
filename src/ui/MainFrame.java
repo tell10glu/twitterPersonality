@@ -5,11 +5,11 @@ import helper.Log;
 import helper.TwitterHelper;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Time;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -21,15 +21,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+
 import datacollection.readUserTweets;
 
 public class MainFrame extends JFrame {
 	public static ArrayList<readUserTweets> listTweets = new ArrayList<readUserTweets>();
 	
 	private static final long serialVersionUID = 1L;
-	private void init(){
-		
-	}
+	
 	
 	/**
 	 * Bu thread sürekli olarak çalışacak ve kullanıcıların tweetlerini çekecektir.
@@ -39,18 +38,19 @@ public class MainFrame extends JFrame {
 		public void run() {
 			while(true){
 				try {
+					System.gc();
 					int counter = 0;
 					int i =0;
-					while(i<listTweets.size() && counter<50){
+					while(i<listTweets.size() && counter<30){
 						if(!listTweets.get(i).isRunning()){
 							counter++;
 							new Thread(listTweets.get(i)).start();
 						}
 						i++;
 					}
-					Thread.sleep(6000);
+					Thread.sleep(1000*10);// 10 saniyede bir twit okumaya başla
 				} catch (Exception e) {
-					// TODO: handle exception
+					Log.e(e.getMessage());
 				}
 				
 			}
@@ -83,7 +83,7 @@ public class MainFrame extends JFrame {
 					while(rs.next()){
 						modelUser.addRow(new Object[]{rs.getInt(1),rs.getString(2),rs.getBoolean(3)});
 					}
-					query = "Select * from Tweets";
+					query = "Select * from Tweets order by id desc limit 1000";
 					rs = st.executeQuery(query);
 					while(rs.next()){
 						modelTweet.addRow(new Object[]{rs.getInt(1),rs.getString(2),rs.getBoolean(3),rs.getDate(4)});
@@ -110,8 +110,7 @@ public class MainFrame extends JFrame {
 			while(true){
 				try {
 					invokeTableDatas();
-					
-					Thread.sleep(1000*10);// 10 saniyede bir tekrarla
+					Thread.sleep(1000*30);// 30 saniyede bir tekrarla
 				} catch (Exception e) {
 					e.printStackTrace();
 					// TODO: handle exception
@@ -162,11 +161,31 @@ public class MainFrame extends JFrame {
 		JButton btnConcept = new JButton("Concept");
 		panel.add(btnConcept);
 		
-		JButton btnAddNewApplication = new JButton("Add New Application Keys");
+		JButton btnAddNewApplication = new JButton("Add Application Keys");
+		btnAddNewApplication.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ApplicationKeyFrame frame = new ApplicationKeyFrame();
+				frame.setVisible(true);
+			}
+		});
 		panel.add(btnAddNewApplication);
-		
-		JButton btnStreamNewHashtag = new JButton("Stream New HashTag");
+		JButton btnStreamNewHashtag = new JButton("Stream HashTag");
 		panel.add(btnStreamNewHashtag);
+		
+		JButton btnSpace = new JButton("Space");
+		btnSpace.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SpaceFrame frm = new SpaceFrame();
+				frm.setSize(200, 100);
+				frm.setVisible(true);
+			}
+		});
+		panel.add(btnSpace);
+		
+		JButton btnAnalyzingWord = new JButton("Analyzing Word");
+		panel.add(btnAnalyzingWord);
 		
 		modelLog = new DefaultTableModel();
 		modelTweet = new DefaultTableModel();
@@ -192,7 +211,8 @@ public class MainFrame extends JFrame {
 		tableUsers.setModel(modelUser);
 		
 		runThreads();
-		init();
+		
+		refreshTableDatas.setPriority(Thread.MIN_PRIORITY);
 		refreshTableDatas.start();
 	}
 	private void runThreads(){
@@ -221,7 +241,11 @@ public class MainFrame extends JFrame {
 				// TODO: handle exception
 			}
 		}
+		
+		fetchTweets.setPriority(Thread.MAX_PRIORITY);
 		fetchTweets.start();
+		
+		TwitterHelper.checkApplicationAvailability.setPriority(Thread.NORM_PRIORITY);
 		TwitterHelper.checkApplicationAvailability.start();
 	}
 }

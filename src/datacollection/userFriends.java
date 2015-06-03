@@ -19,20 +19,15 @@ public class userFriends implements Runnable {
 	public void run() {
 		
 		try {
-			// veritabaninda var mi kontrol et
-			 
 			  twitter = TwitterHelper.getTwitter();				
 		      long cursor = -1;
 		      PagableResponseList<User> followers;
-		      System.out.println("Listing followers's ids."); 
 		    	  followers = twitter.getFollowersList(userName, cursor);
 		    	  for (User follower : followers) {
-		    		  
-		    		  	System.out.println(follower.getScreenName());
+		    		  	//System.out.println(follower.getScreenName());
 		    		  	MainFrame.listTweets.add(new readUserTweets(follower.getScreenName()));
 		    	 
 		    	  }
-		      Thread.sleep(15000);
 		} catch (TwitterException e) {
 			if(e.exceededRateLimitation()){
 				Configuration c = twitter.getConfiguration();
@@ -45,6 +40,13 @@ public class userFriends implements Runnable {
 		}catch(Exception ex){
 			Log.systemError(ex.getMessage());
 			ex.printStackTrace();
+		}finally{
+			try {
+				finalize();
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}

@@ -46,10 +46,10 @@ public class AddConcept extends JFrame{
 				if(comboParent.getSelectedIndex()!=-1){
 					parentString = comboParent.getSelectedItem().toString();
 				}
-				System.out.println(parentString);
+				//System.out.println(parentString);
 				int parentId;
 				if(parentString!=null){
-					System.out.println(parentString.split(" . ")[0]);
+					//System.out.println(parentString.split(" . ")[0]);
 					parentId = Integer.parseInt(parentString.split(" . ")[0]);
 				}else{
 					parentId = 0;

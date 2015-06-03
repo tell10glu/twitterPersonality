@@ -18,10 +18,11 @@ public class TwitterHelper {
 	
 	public static ArrayList<TwitterApplication> applications  = TwitterApplication.getTwitterApplications();
 	
+	/**Twitter applicationlarını döndüren fonksiyon
+	 * @return boş olan bir applicationi dondurur . Hiç bulamaz ise null döndürür.
+	 */
 	public static Twitter getTwitter(){
-		for(int i =0;i<applications.size();i++){
-			System.out.println(applications.get(i).isAvailable());
-		}
+		
 		int i =0;
 		boolean found = false;
 		while(i<applications.size() && !found){
@@ -43,6 +44,14 @@ public class TwitterHelper {
 	     Twitter twitter = tf.getInstance();
 	     return twitter;
 	}
+	/**
+	 * Değerleri verilen Twitter apisini bulur.
+	 * @param cKey Consumer Key
+	 * @param cSecret Consumer Secret
+	 * @param aToken Access Token
+	 * @param aTokenSecret Access Token Secret
+	 * @return TwitterHelper.applications içindeki indexi döndürür. Bulamaz ise -1
+	 */
 	public static int findApplication(String cKey,String cSecret,String aToken,String aTokenSecret){
 		for(int i =0;i<applications.size();i++){
 			TwitterApplication app = applications.get(i);
@@ -57,6 +66,7 @@ public class TwitterHelper {
 	 * Varsayılan saat 2 saattir!
 	 */
 	public static Thread checkApplicationAvailability = new Thread(){
+		
 		public void run() {
 			while(true){
 				try {

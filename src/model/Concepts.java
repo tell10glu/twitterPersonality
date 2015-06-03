@@ -95,7 +95,7 @@ public class Concepts {
 		Connection con  = null;
 		String query = null;
 		try {
-			System.out.println(concept.toString());
+			//System.out.println(concept.toString());
 			con = DatabaseHelper.getDatabaseConnectionPath();
 			
 			if(concept.getId()==0)

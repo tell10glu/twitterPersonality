@@ -2,11 +2,9 @@ package datacollection;
 import helper.Log;
 import helper.TwitterHelper;
 
-import java.security.spec.ECField;
 import java.util.List;
 
 import model.Tweets;
-import model.TwitterApplication;
 import model.User;
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -29,7 +27,6 @@ public class readUserTweets implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("giris yaptim");
 			 // kullanıcı kayıtlı ve twitleri okunmuş ise tekrar okuma .
 			 if(User.isUserExists(userName) && User.isUserTweetReaded(userName)){
 				 new Thread(new userFriends(userName)).start();
@@ -47,9 +44,8 @@ public class readUserTweets implements Runnable {
 			     for(int i =0;i<status.size();i++){
 			    	 if(Tweets.isTweetOK(status.get(i).getText())){
 			    		 Tweets.addTweet(status.get(i).getText(), userName);
-				    	 System.out.println(status.get(i).getText());
+				    	 //System.out.println(status.get(i).getText());
 			    	 }
-			    	
 			     }
 			     tweetCounter++;
 		     }
@@ -74,6 +70,12 @@ public class readUserTweets implements Runnable {
 		}finally{
 			MainFrame.listTweets.remove(this);
 			running = false;
+			try {
+				finalize();
+			} catch (Throwable e) {
+				
+				e.printStackTrace();
+			}
 		}
 		
 	}
