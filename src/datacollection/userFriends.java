@@ -39,6 +39,7 @@ public class userFriends implements Runnable {
 			e.printStackTrace();
 		}catch(Exception ex){
 			Log.systemError(ex.getMessage());
+			
 			ex.printStackTrace();
 		}finally{
 			try {
