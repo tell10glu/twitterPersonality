@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.mysql.jdbc.Statement;
+
 /**
  * Twitleri kaydeden model
  * @author abdullahtellioglu
